@@ -120,6 +120,7 @@ graph TD
 | 20 | `/admin/packages` | Admin Protected | Travel packages management, multi-day itinerary editor, capacity settings |
 | 21 | `/admin/bookings` | Admin Protected | Complete bookings ledger with status updater (Confirmed, Completed, Cancelled) |
 | 22 | `/admin/users` | Admin Protected | Registered travelers directory with role badges and account creation audit |
+| 23 | `/ai-planner` | Public | **AI Trip Planner**: Gemini 3.8 Flash day-by-day itinerary generator, budget breakdown, packing checklist, and direct booking integration |
 
 ---
 
@@ -138,6 +139,7 @@ DATABASE_URL="postgresql://postgres@localhost:5432/travelai?schema=public"
 JWT_SECRET="travelai_super_secret_jwt_key_2026_dev_secure"
 JWT_EXPIRES_IN="7d"
 CLIENT_URL="http://localhost:5173"
+GEMINI_API_KEY="your_google_gemini_api_key_here"  # Optional: falls back gracefully to curated engine
 ```
 
 Inside `client/.env`:

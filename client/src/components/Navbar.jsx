@@ -13,6 +13,7 @@ import {
   Shield,
   CalendarCheck,
   ChevronDown,
+  Sparkles,
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -33,6 +34,7 @@ const Navbar = () => {
     { name: 'Destinations', path: '/destinations' },
     { name: 'Hotels', path: '/hotels' },
     { name: 'Packages', path: '/packages' },
+    { name: 'AI Planner', path: '/ai-planner', isAi: true },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -64,13 +66,24 @@ const Navbar = () => {
                 to={link.path}
                 className={({ isActive }) =>
                   `px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                    isActive
+                    link.isAi
+                      ? isActive
+                        ? 'text-white bg-gradient-to-r from-primary-600 to-accent-600 shadow-md shadow-primary-500/20'
+                        : 'text-primary-700 bg-primary-50/80 hover:bg-primary-100 border border-primary-200/60'
+                      : isActive
                       ? 'text-primary-600 bg-primary-50/80'
                       : 'text-slate-600 hover:text-primary-600 hover:bg-slate-50'
                   }`
                 }
               >
-                {link.name}
+                {link.isAi ? (
+                  <span className="flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-accent-500" />
+                    {link.name}
+                  </span>
+                ) : (
+                  link.name
+                )}
               </NavLink>
             ))}
           </div>
@@ -204,13 +217,24 @@ const Navbar = () => {
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `block px-3 py-2.5 rounded-xl text-base font-semibold ${
-                  isActive
+                  link.isAi
+                    ? isActive
+                      ? 'text-white bg-gradient-to-r from-primary-600 to-accent-600'
+                      : 'text-primary-700 bg-primary-50 border border-primary-200'
+                    : isActive
                     ? 'text-primary-600 bg-primary-50'
                     : 'text-slate-700 hover:bg-slate-50'
                 }`
               }
             >
-              {link.name}
+              {link.isAi ? (
+                <span className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-accent-500" />
+                  {link.name}
+                </span>
+              ) : (
+                link.name
+              )}
             </NavLink>
           ))}
 

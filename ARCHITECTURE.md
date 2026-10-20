@@ -409,6 +409,7 @@ App.jsx (Router)
 │   │   ├── Profile (Personal Info Editor, Password Change Form)
 │   │   ├── About (Mission, Values, Team Roster, Trust Badges)
 │   │   ├── Contact (Inquiry Form, HQ Info, FAQ Accordion)
+│   │   ├── AiTripPlanner (Gemini 3.8 Flash Itinerary Generator, Day Timeline, Budget Estimates, Packing Checklist)
 │   │   └── NotFound (404 Error Screen)
 │   └── Footer (Navigation, Contact Info, Copyright, Newsletter Form)
 │
@@ -483,6 +484,11 @@ App.jsx (Router)
 |--------|----------|--------|---------|
 | `GET` | `/api/admin/stats` | Admin | Summary metrics: total destinations, hotels, packages, bookings, revenue |
 | `GET` | `/api/admin/users` | Admin | Complete user registry with role counts and registration timestamps |
+
+### AI Travel Concierge (`/api/ai`)
+| Method | Endpoint | Access | Purpose |
+|--------|----------|--------|---------|
+| `POST` | `/api/ai/generate-itinerary` | Public | Generates customized day-by-day itinerary via Google Gemini 3.8 Flash with structured JSON output and curated fallback |
 
 ---
 

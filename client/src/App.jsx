@@ -19,6 +19,7 @@ import MyBookings from './pages/MyBookings';
 import Profile from './pages/Profile';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import AiTripPlanner from './pages/AiTripPlanner';
 import NotFound from './pages/NotFound';
 
 // Admin Pages
@@ -49,6 +50,7 @@ function App() {
         <Route path="profile" element={<Profile />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="ai-planner" element={<AiTripPlanner />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 

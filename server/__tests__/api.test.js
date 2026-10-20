@@ -340,4 +340,37 @@ describe('5. Booking Workflows & Server Pricing Validation', () => {
     expect(res.body.data.status).toBe('CANCELLED');
     expect(res.body.data.paymentStatus).toBe('REFUNDED');
   });
+
+  // 6. AI Travel Itinerary Engine
+  describe('6. AI Travel Itinerary Planner', () => {
+    it('POST /api/ai/generate-itinerary rejects requests without destination', async () => {
+      const res = await request(app)
+        .post('/api/ai/generate-itinerary')
+        .send({ durationDays: 3 });
+
+      expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
+    });
+
+    it('POST /api/ai/generate-itinerary generates a complete day-by-day structured itinerary', async () => {
+      const res = await request(app)
+        .post('/api/ai/generate-itinerary')
+        .send({
+          destination: 'Santorini, Greece',
+          durationDays: 3,
+          budget: 'Luxury',
+          travelers: 'Couple',
+          interests: ['Beaches & Relaxation', 'Fine Dining'],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.success).toBe(true);
+      expect(res.body.data).toBeDefined();
+      expect(res.body.data.tripTitle).toContain('Santorini');
+      expect(res.body.data.days).toHaveLength(3);
+      expect(res.body.data.estimatedBudgetBreakdown).toBeDefined();
+      expect(res.body.data.packingChecklist).toBeInstanceOf(Array);
+      expect(res.body.data.localCuisineToTry).toBeInstanceOf(Array);
+    });
+  });
 });

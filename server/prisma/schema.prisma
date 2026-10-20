@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BookingType {
+  HOTEL
+  PACKAGE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  name      String
+  phone     String?
+  role      Role      @default(USER)
+  avatar    String?
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Destination {
+  id              String          @id @default(uuid())
+  name            String
+  country         String
+  continent       String?
+  description     String
+  imageUrl        String
+  galleryUrls     Json?           // Array of image URLs
+  bestTimeToVisit String?
+  currency        String?
+  language        String?
+  priceEstimate   Decimal         @db.Decimal(10, 2)
+  isFeatured      Boolean         @default(false)
+  hotels          Hotel[]
+  packages        TravelPackage[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([country])
+  @@index([continent])
+  @@index([isFeatured])
+}
+
+model Hotel {
+  id            String      @id @default(uuid())
+  name          String
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  address       String
+  city          String
+  country       String
+  description   String
+  imageUrl      String
+  galleryUrls   Json?
+  starRating    Int         @default(4)
+  pricePerNight Decimal     @db.Decimal(10, 2)
+  amenities     Json        // Array of amenities strings e.g. ["Free WiFi", "Pool", ...]
+  isFeatured    Boolean     @default(false)
+  roomTypes     RoomType[]
+  bookings      Booking[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([destinationId])
+  @@index([city])
+  @@index([starRating])
+  @@index([isFeatured])
+}
+
+model RoomType {
+  id             String    @id @default(uuid())
+  hotelId        String
+  hotel          Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  name           String    // e.g. Deluxe Ocean View, Presidential Suite
+  description    String?
+  capacity       Int       @default(2)
+  pricePerNight  Decimal   @db.Decimal(10, 2)
+  bedType        String    @default("1 King Bed")
+  amenities      Json?
+  totalRooms     Int       @default(10)
+  availableRooms Int       @default(10)
+  bookings       Booking[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([hotelId])
+}
+
+model TravelPackage {
+  id               String      @id @default(uuid())
+  title            String
+  destinationId    String
+  destination      Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  durationDays     Int
+  durationNights   Int
+  pricePerPerson   Decimal     @db.Decimal(10, 2)
+  maxCapacity      Int         @default(20)
+  bookedCount      Int         @default(0)
+  category         String      @default("Adventure") // Adventure, Cultural, Luxury, Beach, Nature
+  season           String?
+  isFeatured       Boolean     @default(false)
+  imageUrl         String
+  galleryUrls      Json?
+  itinerary        Json        // Array of { day: number, title: string, description: string, meals?: string }
+  includedServices Json        // Array of strings
+  excludedServices Json        // Array of strings
+  bookings         Booking[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([destinationId])
+  @@index([category])
+  @@index([isFeatured])
+}
+
+model Booking {
+  id                String         @id @default(uuid())
+  bookingReference  String         @unique // e.g. TRV-2026-XXXXX
+  userId            String
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookingType       BookingType    // HOTEL or PACKAGE
+  hotelId           String?
+  hotel             Hotel?         @relation(fields: [hotelId], references: [id], onDelete: SetNull)
+  roomTypeId        String?
+  roomType          RoomType?      @relation(fields: [roomTypeId], references: [id], onDelete: SetNull)
+  packageId         String?
+  travelPackage     TravelPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  checkInDate       DateTime
+  checkOutDate      DateTime
+  travelerCount     Int            @default(1)
+  guestsDetails     Json?          // Array of { fullName: string, email?: string, age?: number }
+  specialRequests   String?
+  unitPriceSnapshot Decimal        @db.Decimal(10, 2) // Snapshot unit price (per night or per person)
+  subtotal          Decimal        @db.Decimal(10, 2)
+  taxAmount         Decimal        @db.Decimal(10, 2)
+  serviceFee        Decimal        @db.Decimal(10, 2)
+  totalAmount       Decimal        @db.Decimal(10, 2) // Verified & computed on server
+  status            BookingStatus  @default(CONFIRMED)
+  paymentStatus     PaymentStatus  @default(PAID)
+  paymentMethod     String         @default("Demo Credit Card")
+  paymentReference  String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([bookingReference])
+  @@index([status])
+  @@index([bookingType])
+}

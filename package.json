@@ -1,0 +1,16 @@
+{
+  "name": "travelai-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TravelAI - Modern Full-Stack Travel Booking Platform",
+  "scripts": {
+    "install:server": "npm --prefix server install",
+    "install:client": "npm --prefix client install",
+    "install:all": "npm run install:server && npm run install:client",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test:server": "npm --prefix server test",
+    "prisma:migrate": "npm --prefix server run prisma:migrate",
+    "prisma:seed": "npm --prefix server run prisma:seed"
+  }
+}
